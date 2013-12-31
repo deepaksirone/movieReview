@@ -1,0 +1,27 @@
+FILE *f;
+    if (argc > 1)
+        f = fopen(argv[1],"r+");
+    else
+    {
+        printf("No input file");
+        exit(1);
+    }
+    int line_count = 0;
+    int no_of_users = 0;
+    char c;
+    while ((c = fgetc(f)) != EOF)
+    {
+        if (c == '\n')
+        {
+            line_count++;
+        }
+        if (c == ':')
+        {
+            no_of_users++;
+        }
+    }
+    long int pos = ftell(f);
+    
+
+    rewind(f);
+return 0;

@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1384145716 source:/home/deepak/Projects/Movie Review System/Movie Review System/main.c
+	<stdio.h>
+	<stdlib.h>
+

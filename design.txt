@@ -1,0 +1,60 @@
+####################################################################
+##                                                                ##
+##                     MOVIE REVIEW SYSTEM                        ##
+##								  ##
+####################################################################
+
+Team Members : Deepak Sirone , Kurian Jacob
+Language Used : C
+Time required for completion : 2-3 weeks
+
+
+Design
+______
+
+The basic design has 3 modules :
+
+i) Corrpution Remover
+ii) Ranking System
+iii) Html Output module
+
+i)Corruption Remover
+
+Read one line at a time from the input file.
+Jump from one space character to the next till there is a colon in the word immediately after a space.
+If there is a colon in the word immediately after the space,replace the space with a marking character.
+
+Eg:
+Input 
+Movie: Conjuring sudev: Waste of time abhijith:good movie
+Output
+Movie: Conjuring<newline marker>sudev:Waste of time<newline marker>abhijith:good movie
+
+After this procedure is done, the file (maybe a new edited file can be created) ,is re-read and re-written with the movie name and the comments on different lines,separately, using the markings done earlier.
+
+
+ii) Ranking System 
+
+The ranking system has a list of words, using which each induvidual line of the corruption-free file is ranked.
+Different words are given different scores , and the sum total of the scores for a line , is its respective score.
+The total sum of scores is noted.
+The top 3 and the bottom 3 scoring line numbers are noted.
+
+iii)Html Output Module
+
+The module has a template ,consisting of html tags.Using the output from the ranking system the appropriate entries in the template are filled and the output redirected/written to a file, which is then saved in .html format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

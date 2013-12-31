@@ -1,0 +1,453 @@
+//Movie Review System   ~Deepak Sirone
+//Open to Distributiion and modification
+//Have to read more on open source licenses....:D..:D
+
+#define MAX_COMMENT_SIZE 50
+#define MAX_WORD_SIZE 50
+#define br fprintf(f1,"%s","<br>")
+#define bopen fprintf(f1,"%s","<b>")
+#define bclose fprintf(f1,"%s","</b>")
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct user
+{
+
+    char *name;
+    int rating;
+    char *comment;
+
+};
+int str_len(char *s)
+{
+
+    int i;
+    for(i = 0 ; ; i++)
+            if (s[i] == '\0')
+                break;
+
+    return (i+1);
+
+
+}
+void str_cpy(char *dest,char *source)
+{
+
+    int i = 0;
+    int l = str_len(source);
+    for(i = 0 ; i < l ; i++)
+    {
+
+        dest[i] = source[i];
+
+
+    }
+
+}
+int str_eql(char *s1, char *s2)
+{
+
+    int l = str_len(s1);
+    int i;
+    int flag;
+    if (l == str_len(s2))
+    {
+
+        flag = 0;
+        for (i = 0 ; i < l;i++)
+        { if (s1[i] != s2[i])
+            {
+                flag = 1;
+                break;
+
+            }
+        }
+        if (flag)
+            return 0;
+        else
+            return 1;
+
+
+    }
+    else
+        return 0;
+
+
+}
+
+
+char *str_dup(char *s)
+{
+
+    int i = str_len(s);
+    char *cpy = malloc(i);
+    str_cpy(cpy,s);
+    return cpy;
+
+
+
+}
+int isuser(const char *s)
+{
+
+    char c;
+    int i = 0;
+    while((c = s[i]) != '\0')
+    {
+        if(s[i] == ':')
+            return 1;
+        i++;
+    }
+    return 0;
+
+
+}
+int rate_word(char *word)
+{
+        char *word_list[] ={"nice","good","awesome","Nice","Good","Awesome","awful","Awful","Wonderful!","wonderful","Wonderful","bad","Bad","Insane","insane","waste","Waste","Better","better","Horrible","horrible","Horrible!","Decent","decent","No","no"};
+        int ratings[] = {7,6,8,7,6,8,1,1,8,8,8,3,3,9,9,2,2,5,5,1,1,1,5,5,5,5};
+        int i = 0;
+        int rating = 0;
+        for(i = 0 ;i < 26 ; i++)
+        {
+
+         if (str_eql(word,word_list[i]))
+         {
+
+            rating += ratings[i];
+
+
+         }
+
+
+
+        }
+    return rating;
+
+
+
+}
+
+
+void str_cat(char *dest, char *source)
+{
+
+        int l = str_len(dest) + str_len(source);
+        int l1 = str_len(dest);
+
+        int i;
+
+        int j = 0;
+        for(i = l1 - 1; i < l-1; i++)
+        {
+            dest[i] = source[j];
+            j++;
+
+
+        }
+
+
+
+
+}
+void del_database(struct user **db,int s)
+{
+
+int i = 0;
+for(i = 0; i < s ; i++)
+{
+
+free(db[i]->name);
+free(db[i]->comment);
+free(db[i]);
+
+}
+}
+float overrall_rating(struct user **db, int usr_count)
+{
+
+      int i;
+      float rating = 0;
+      for(i = 1 ; i < usr_count; i++)
+      {
+
+
+            rating = rating + (db[i]->rating);
+
+
+
+      }
+
+      return (rating/(usr_count-1));
+
+
+
+
+
+}
+
+struct user *cuser(char *name,char *comment, int rating)
+{
+
+    struct user *user1 = malloc(sizeof(struct user));
+
+    user1 -> name = str_dup(name);
+    user1 -> comment = comment;
+    user1 -> rating = rating;
+
+
+    return user1;
+
+}
+void html_module(struct user **db,int s,float rating)
+{
+
+    FILE *f1;
+    int i;
+    f1 = fopen("out.html","w+");
+    fprintf(f1,"%s","<html> <body> <b>");
+    fprintf(f1,"%s",db[0]->comment);
+    fprintf(f1,"%s","</b> <br>");
+    br;
+    fprintf(f1,"%s %.2f","Overall Rating:",rating);
+    br;
+    br;
+    bopen;
+    fprintf(f1,"%s","TOP 3 COMMENTS </b><br>");
+    fprintf(f1,"%s %s %s %s %s %s %s %s",db[1]->name,db[1]->comment,"<br>",db[2]->name,db[2]->comment,"<br>",db[3]->name,db[3]->comment);
+    br;
+    br;
+    bopen;
+    fprintf(f1,"%s","BOTTOM 3 COMMENTS");
+    bclose;
+    br;
+
+    fprintf(f1,"%s %s %s %s %s %s %s %s",db[s-1]->name,db[s-1]->comment,"<br>",db[s-2]->name,db[s-2]->comment,"<br>",db[s-3]->name,db[s-3]->comment);
+    br;
+    br;
+    bopen;
+    fprintf(f1,"%s","OTHER COMMENTS");
+    bclose;
+
+
+    for(i = 3 ; i <= s-4 ; i++)
+    {    br;
+         fprintf(f1,"%s %s",db[i]->name,db[i]->comment);
+
+
+
+    }
+    fprintf(f1,"%s","</body></html>");
+    fclose(f1);
+
+
+
+}
+
+
+
+
+struct user **create_database(int s)
+{
+
+     struct user **db = malloc(sizeof(struct user) * s);
+     return db;
+}
+char *acquire_comment_and_rate(FILE *f, int c,int *rating)
+{
+
+    char *temp_comment = malloc(MAX_COMMENT_SIZE * sizeof(char));
+    temp_comment[0] = '\0';
+    char temp_word[MAX_COMMENT_SIZE];
+
+    int pos;
+    int flag = 0;
+    while(ftell(f) < c)
+    {
+        pos = ftell(f);
+        fscanf(f,"%s",temp_word);
+
+        if(isuser(temp_word))
+        {
+        fseek(f,pos,0);
+
+        break;
+        }
+        else
+        {
+            *rating += rate_word(temp_word);
+            if (flag != 0)
+                str_cat(temp_comment," ");
+            str_cat(temp_comment,temp_word);
+            flag = 1;
+            temp_word[0] = '\0';
+
+
+        }
+
+
+
+    }
+    return temp_comment;
+
+
+
+
+}
+
+
+
+void sort_db(struct user **db,int s)
+{
+
+        int i,j;
+        struct user *temp ;
+        for(i = 1 ;i < s ;i++)
+            for(j = s - 1 ; j > i ; j--)
+            {
+                if((db[j]-> rating) > (db[j-1]->rating))
+                {
+                    temp = db[j];
+                    db[j] = db[j-1];
+                    db[j-1] = temp;
+
+
+                }
+
+
+
+            }
+
+
+
+
+}
+
+
+void analyze_file(FILE *f, struct user **db,int c)
+{
+
+
+
+       int i = 0;
+       int *rating = malloc(sizeof(int));
+       *rating = 0;
+       char *temp_comment;
+       char temp_word[20];
+       while((ftell(f)) < c)
+       {
+        fscanf(f,"%s",temp_word);
+
+        if (isuser(temp_word))
+        {
+
+        temp_comment = acquire_comment_and_rate(f,c,rating);
+
+        struct user *user1 = cuser(temp_word,temp_comment,*rating);
+        db[i] = user1;
+        i++;
+        *rating = 0;
+
+
+        }
+
+
+        }
+        free(rating);
+
+
+}
+
+
+
+void print_db(struct user **db,int s)
+{
+int i;
+
+for (i = 0 ; i < s; i++)
+{
+    printf ("Name: %s Comment: %s Rating: %d\n",db[i]->name,db[i]->comment,db[i]->rating);
+
+}
+
+}
+
+
+
+int main(int argc, char *argv[])
+{   FILE *f;
+    if (argc == 2)
+    {
+
+    f = fopen(argv[1],"r+");
+
+
+    }
+    else{
+
+    printf("No input file");
+    exit(1);
+
+
+    }
+    char c;
+
+    int usr_count = 0;
+    while((c = getc(f)) != EOF)
+    {
+            if (c == ':')
+            {
+                usr_count++;
+
+            }
+
+
+    }
+    if(usr_count < 7)
+    {
+    printf("Lesser than 6 users.Exiting");
+    exit(1);
+
+    }
+    int n = ftell(f);
+
+    rewind(f);
+    struct user **db = create_database(usr_count);
+    analyze_file(f,db,n);
+
+
+    sort_db(db,usr_count);
+
+    html_module(db,usr_count,overrall_rating(db,usr_count));
+    print_db(db,usr_count);
+    del_database(db,usr_count);
+    free(db);
+    fclose(f);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

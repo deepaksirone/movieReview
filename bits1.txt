@@ -1,0 +1,29 @@
+void create_database(struct user *database[],FILE *f,int no_of_users,int pos)
+{
+    char temp_comment_word[50];
+      
+    int i = -1;
+    
+    int j = 0;
+    while(ftell(f) < pos)
+    {
+        fscanf(f,"%s",temp_comment_word);
+        if(isuser(temp_comment_word))
+        {
+            i++;
+            database[i]->name = temp_comment_word;
+            database[i]->user = i;
+            j = 0;
+        }
+        else
+        {
+            database[i]->comment[j] = temp_comment_word;
+            j++;
+
+        }
+
+    }
+
+
+
+}
